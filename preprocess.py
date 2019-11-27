@@ -1,5 +1,3 @@
-import numpy as np
-import tensorflow as tf
 import csv
 import string
 
@@ -18,12 +16,13 @@ def removeSymbols(s):
     #TODO: split on white space
     t = s.split()
 
-    #TODO: remove usernames & any words w/ digits included
-    char_set = string.digits
+    #TODO: remove usernames & any words w/ digits included & links
+    char_set = string.digits + '@'
     tokens = []
     for token in t:
         if not(any(elem in char_set for elem in token)):
-            tokens.append(token)
+            if 'http://' not in token:
+                tokens.append(token)
     return " ".join(tokens)
 
 def get_data(train_file,test_file):
@@ -31,7 +30,7 @@ def get_data(train_file,test_file):
     #COMMENT THESE OUT WHEN OFFICIALLY RUNNING
     train_file = 'data/train.csv'
     test_file = 'data/test.csv'
-    
+
     #TODO: read in files
     train_data = []
     train_labels = []
@@ -51,7 +50,7 @@ def get_data(train_file,test_file):
                 test_labels.append(row[0])
                 test_data.append(row[2])
 
-    #TODO: Remove symbols from the data
+    #TODO: Remove symbols from the data, usernames, numbers, and links
     new_train_data = []
     for data in train_data:
         new_data = removeSymbols(data)
@@ -64,3 +63,4 @@ def get_data(train_file,test_file):
     #TODO: build vocab
 
     #TODO: convert data to their indices
+

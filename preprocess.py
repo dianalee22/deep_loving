@@ -4,7 +4,11 @@ import string
 def isEnglish(s):
     #data coming in with unicode?
     #TODO: take in string WITH SYMBOLS REMOVED and return true if string is English
-    pass
+    token = s.split()
+    for t in token:
+        if not(t.isascii()):
+            return False
+    return True
 
 def removeSymbols(s):
     #TODO: remove all symbols from a string
@@ -37,25 +41,49 @@ def get_data(train_file,test_file):
     with open(train_file) as csvDataFile:
         csvReader = csv.reader(csvDataFile)
         for row in csvReader:
-            if isEnglish(row[2]):
-                train_labels.append(row[0])
-                train_data.append(row[2])
+            train_labels.append(row[0])
+            train_data.append(row[2])
 
     test_data = []
     test_labels = []
     with open(test_file) as csvDataFile:
         csvReader = csv.reader(csvDataFile)
         for row in csvReader:
-            if isEnglish(row[2]):
-                test_labels.append(row[0])
-                test_data.append(row[2])
+            test_labels.append(row[0])
+            test_data.append(row[2])
 
     #TODO: Remove symbols from the data, usernames, numbers, and links
     new_train_data = []
     for data in train_data:
         new_data = removeSymbols(data)
         new_train_data.append(new_data)
+    train_data = new_train_data
 
+    new_test_data = []
+    for data in test_data:
+        new_data = removeSymbols(data)
+        new_test_data.append(new_data)
+    test_data = new_test_data
+
+    #TODO: Remove comments that aren't in English
+    new_train_data = []
+    new_train_labels = []
+    for i in range(len(train_labels):
+        if isEnglish(train_data[i]):
+            new_train_data.append(train_data[i])
+            new_train_labels.append(train_labels[i])
+    train_data = new_train_data
+    train_labels = new_train_labels
+
+    new_test_data = []
+    new_test_labels = []
+    for i in range(len(test_labels):
+        if isEnglish(test_data[i]):
+            new_test_data.append(test_data[i])
+            new_test_labels.append(test_labels[i])
+    test_data = new_test_data
+    test_labels = new_test_labels
+    
     #TODO: tokenize the data - how are we doing this? by words, by characters?
 
     #TODO: pad data? is this necessary
@@ -63,4 +91,5 @@ def get_data(train_file,test_file):
     #TODO: build vocab
 
     #TODO: convert data to their indices
+
 

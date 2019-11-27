@@ -15,7 +15,7 @@ def removeSymbols(s):
         if x in char_set:
             s = s.replace(x,"")
 
-    #TODO: tokenize string
+    #TODO: split on white space
     t = s.split()
 
     #TODO: remove usernames & any words w/ digits included
@@ -24,27 +24,15 @@ def removeSymbols(s):
     for token in t:
         if not(any(elem in char_set for elem in token)):
             tokens.append(token)
-    return tokens
+    return " ".join(tokens)
 
 def get_data(train_file,test_file):
+    #TODO: Figure out what the data needs to look like when it leaves preprocessing
+    #COMMENT THESE OUT WHEN OFFICIALLY RUNNING
     train_file = 'data/train.csv'
     test_file = 'data/test.csv'
-    #separate into comments and labels
-    #for comments - figure out how to remove the \\xja;lskdjf; @symbols etc. anything that isn't a regular letter and isn't a word
-    #first split on spaces? unk any word that contains a non-english letter??
-    #create a vocab dict that maps each word in the corpus to a unique index (its id)
-    # TODO: read in and tokenize training data
-    # convert to their indices (making a 1-d list/array)
-
-    # TODO: read in and tokenize testing data
-    # convert to their indices (making a 1-d list/array)
-
-    # TODO: return tuple of training tokens, testing tokens, and the vocab dictionary.
-
-    #Do we need to pad the data? How are we tokenizing? How do we maintain the labels while tokenizing
-
-
-    #READ IN FILES
+    
+    #TODO: read in files
     train_data = []
     train_labels = []
     with open(train_file) as csvDataFile:
@@ -63,9 +51,16 @@ def get_data(train_file,test_file):
                 test_labels.append(row[0])
                 test_data.append(row[2])
 
-    #Tokenize and remove symbols
+    #TODO: Remove symbols from the data
     new_train_data = []
     for data in train_data:
-        tokens = removeSymbols(data)
-        #TODO: Check that this actually adds the tokens properly and doesn't just concatenate
-        new_train_data.append(tokens)
+        new_data = removeSymbols(data)
+        new_train_data.append(new_data)
+
+    #TODO: tokenize the data - how are we doing this? by words, by characters?
+
+    #TODO: pad data? is this necessary
+
+    #TODO: build vocab
+
+    #TODO: convert data to their indices

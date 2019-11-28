@@ -108,3 +108,4 @@ def get_data(train_file,test_file):
     #What words should we UNK?
 
     #TODO: go through paper again and see how they are doing preprocessing/preparing the ngrams?
+    return train_data, test_data, vocab

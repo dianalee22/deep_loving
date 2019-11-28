@@ -6,8 +6,13 @@ import numpy as np
 #TODO: add comments to each function
 
 def isEnglish(s):
-    #data coming in with unicode?
-    #TODO: take in string WITH SYMBOLS REMOVED and return true if string is English
+    """
+    Takes in a comment and determines whether the comment is in English
+
+    param s: string representing the social media comment from the read-in data
+    return: True if the comment is in English, False otherwise
+    """
+    #TODO: take in string and return true if string is English
     token = s.split()
     for t in token:
         if not(t.isascii()):
@@ -15,6 +20,12 @@ def isEnglish(s):
     return True
 
 def removeSymbols(s):
+    """
+    Takes in a comment and removes all symbols
+
+    param s: string representing the social media comment from the read-in data
+    return: string representing the social media comment with all of the symbols removed
+    """
     #TODO: remove all symbols from a string
     char_set = string.punctuation
     for x in s:
@@ -34,6 +45,12 @@ def removeSymbols(s):
     return " ".join(tokens)
 
 def tokenize(s):
+    """
+    Takes in a comment and splits the string on the white space
+
+    param s: string representing the social media comment from the read-in data
+    return: tokenized comment
+    """
     #TODO: tokenize the data - how are we doing this? by words, by characters?
     words = s.split()
 
@@ -42,12 +59,25 @@ def tokenize(s):
     words = [word for word in words if word not in STOPWORDS]
     return words
 
-def convert_to_id(vocab,sentences):
-    return np.stack([[vocab[word] if word in vocab else vocab[UNK_TOKEN] for word in sentence] for sentence in sentences])
+def convert_to_id(vocab,data):
+    """
+    Converts words to their unique IDs
 
-def get_data(train_file,test_file):
+    param vocab: dictionary from words to their unique ID
+    param data: list of tokenized comments
+    return: list of tokenized comments converted into their IDs
+    """
+    return np.stack([[vocab[word] if word in vocab else vocab[UNK_TOKEN] for word in sentence] for sentence in data])
+
+def get_data():
+    """
+    Reads in data from the data files, checks if the comments are in English,
+    remove symbols from the English comments, tokenizes the comments and appends
+    them to train/test data, builds a vocabulary from the training data, and
+    converts the comments to their id forms 
+    return: tuple of (training data of comments in id form, testing data of comments in id form, vocab dictionary)
+    """
     #TODO: Figure out what the data needs to look like when it leaves preprocessing
-    #COMMENT THESE OUT WHEN OFFICIALLY RUNNING
     train_file = 'data/train.csv'
     test_file = 'data/test.csv'
 

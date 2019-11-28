@@ -3,8 +3,6 @@ import string
 from gensim.parsing.preprocessing import STOPWORDS
 import numpy as np
 
-#TODO: add comments to each function
-
 def isEnglish(s):
     """
     Takes in a comment and determines whether the comment is in English

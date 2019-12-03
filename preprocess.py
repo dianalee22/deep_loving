@@ -114,7 +114,7 @@ def get_data():
                 vocab[word] = vocab_ind
                 reverse_vocab[vocab_ind] = word
                 vocab_ind +=1
-            freq[word] += 1
+            frequency[word] += 1
     vocab['UNK'] = len(vocab) + 1
     reverse_vocab[len(vocab)] = 'UNK' #why isn't it len(vocab) + 1 like the vocab?
 

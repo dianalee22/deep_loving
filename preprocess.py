@@ -1,9 +1,9 @@
 from collections import defaultdict
-import glob
 import csv
-import string
 from gensim.parsing.preprocessing import STOPWORDS
+import glob
 import numpy as np
+import string
 
 def removeSymbols(s):
     """
@@ -42,7 +42,19 @@ def convert_to_id(vocab,data):
     param data: list of tokenized comments
     return: list of tokenized comments converted into their IDs
     """
-    return np.stack([[vocab[word] if word in vocab else vocab[UNK_TOKEN] for word in sentence] for sentence in data])
+    d = []
+    for comment in data:
+        c = []
+        for word in comment:
+            id = 0
+            if word in vocab:
+                id = vocab[word]
+            else:
+                id = vocab['UNK']
+            c.append(id)
+        d.append(c)
+
+    return d
 
 def get_data():
     """
@@ -132,3 +144,4 @@ def get_data():
 
     #TODO: go through paper again and see how they are doing preprocessing/preparing the ngrams?
     return train_data, test_data, vocab
+

@@ -1,21 +1,8 @@
+import glob
 import csv
 import string
 from gensim.parsing.preprocessing import STOPWORDS
 import numpy as np
-
-def isEnglish(s):
-    """
-    Takes in a comment and determines whether the comment is in English
-
-    param s: string representing the social media comment from the read-in data
-    return: True if the comment is in English, False otherwise
-    """
-    #TODO: take in string and return true if string is English
-    token = s.split()
-    for t in token:
-        if not(t.isascii()):
-            return False
-    return True
 
 def removeSymbols(s):
     """
@@ -25,22 +12,11 @@ def removeSymbols(s):
     return: string representing the social media comment with all of the symbols removed
     """
     #TODO: remove all symbols from a string
-    char_set = string.punctuation
+    char_set = string.punctuation + string.digits
     for x in s:
         if x in char_set:
             s = s.replace(x,"")
-
-    #TODO: split on white space
-    t = s.split()
-
-    #TODO: remove usernames & any words w/ digits included & links
-    char_set = string.digits + '@'
-    tokens = []
-    for token in t:
-        if not(any(elem in char_set for elem in token)):
-            if 'http://' not in token:
-                tokens.append(token)
-    return " ".join(tokens)
+    return s
 
 def tokenize(s):
     """
@@ -69,44 +45,62 @@ def convert_to_id(vocab,data):
 
 def get_data():
     """
-    Reads in data from the data files, checks if the comments are in English,
-    remove symbols from the English comments, tokenizes the comments and appends
+    Reads in data from the data files, remove symbols from the comments, tokenizes the comments and appends
     them to train/test data, builds a vocabulary from the training data, and
-    converts the comments to their id forms 
+    converts the comments to their id forms
     return: tuple of (training data of comments in id form, testing data of comments in id form, vocab dictionary)
     """
     #TODO: Figure out what the data needs to look like when it leaves preprocessing
-    train_file = 'data/train.csv'
-    test_file = 'data/test.csv'
+    annotations_path = 'hate-speech-dataset-master/annotations_metadata.csv'
+    train_files = glob.glob('hate-speech-dataset-master/sampled_train/*.txt')
+    test_files = glob.glob('hate-speech-dataset-master/sampled_test/*.txt')
+    #all_files = glob.glob('hate-speech-dataset-master/all_files/*.txt')
 
-    #TODO: read in files
-    #TODO: Check if comment is in English
-    #TODO: Remove symbols from the data, usernames, numbers, and links
-    train_data = []
-    train_labels = []
-    with open(train_file) as csvDataFile:
+    train_file_id = {x.replace('hate-speech-dataset-master/sampled_train/','').replace('.txt','') for x in train_files}
+    test_file_id = {x.replace('hate-speech-dataset-master/sampled_test/','').replace('.txt','') for x in test_files}
+    #all_file_id = {x.replace('hate-speech-dataset-master/all_files/','').replace('.txt','') for x in all_files}
+
+    #TODO: read in all labels into a dict mapping the file id to the corresponding label
+    labels = {}
+    with open(annotations_path) as csvDataFile:
         csvReader = csv.reader(csvDataFile)
         for row in csvReader:
-            if isEnglish(row[2]): #Check if comment is in English
-                train_labels.append(row[0])
-                s = removeSymbols(row[2]) #Remove symbols from the data, usernames, numbers, and links
-                words = tokenize(s.lower()) #make sure everything is lowercase and tokenize
-                train_data.append(words)
+            label = 0
+            if row[4]  == 'hate':
+                label = 1
+            labels[row[0]] = label
+
+    #TODO: gather the labels for the training and testing data
+    train_labels = []
+    for f in train_file_id:
+        train_labels.append(labels[f])
+
+    test_labels = []
+    for f in test_file_id:
+        test_labels.append(labels[f])
+
+    # all_label = []
+    # for f in all_file_id:
+    #     all_labels.append(labels[f])
+
+    #TODO: read in the comments, remove symbols, and tokenize
+    train_data = []
+    for file in train_files:
+        f = open(file,"r")
+        s = removeSymbols(f.read())
+        train_data.append(tokenize(s.lower()))
 
     test_data = []
-    test_labels = []
-    with open(test_file) as csvDataFile:
-        csvReader = csv.reader(csvDataFile)
-        for row in csvReader:
-            if isEnglish(row[2]): #Check if comment is in English
-                test_labels.append(row[0])
-                s = removeSymbols(row[2]) #Remove symbols from the data, usernames, numbers, and links
-                words = tokenize(s.lower()) #make sure everything is lowercase and tokenize
-                test_data.append(words)
+    for file in test_files:
+        f = open(file,"r")
+        s = removeSymbols(f.read())
+        test_data.append(tokenize(s.lower()))
 
-    #CHECKING THAT DATA HAS BEEN APPENDED CORRECTLY
-    print(train_data[0:3])
-    print(test_data[0:3])
+    # all_data = []
+    # for file in all_files:
+    #     f = open(file,"r")
+    #     s = removeSymbols(f.read())
+    #     test_data.append(tokenize(s.lower()))
 
     #TODO: build vocab from train data
     vocab = {}

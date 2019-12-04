@@ -53,16 +53,6 @@ class Model(nn.Module):
 		"""
 		pass
 
-def train(model, train_data):
-	"""
-	"""
-	pass
-
-def test(model, test_data):
-	"""
-	"""
-	pass
-
 def main():
 	num_epochs = 10
 	train_data, test_data = preprocess.get_data('some-file-here')

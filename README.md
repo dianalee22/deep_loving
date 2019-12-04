@@ -1,4 +1,3 @@
 # deep_loving
 
-train.csv and test.csv are from: 
-  https://www.kaggle.com/c/detecting-insults-in-social-commentary/data
+data set comes from (too many files to upload): https://github.com/aitor-garcia-p/hate-speech-dataset 

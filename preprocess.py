@@ -143,5 +143,5 @@ def get_data():
     #What words should we UNK?
 
     #TODO: go through paper again and see how they are doing preprocessing/preparing the ngrams?
-    return train_data, test_data, vocab, reverse_vocab
+    return train_data, test_data, train_labels, test_labels, vocab, reverse_vocab
 

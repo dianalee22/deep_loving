@@ -117,8 +117,8 @@ def get_data():
 
     #TODO: build vocab from train data
     vocab = {}
-    reverse_vocab = {} #why is this necessary?
-    frequency = defaultdict(int) #why do we need frequency?
+    reverse_vocab = {}
+    frequency = defaultdict(int) 
     vocab_ind = 1
     for data in train_data:
         for word in data:
@@ -131,17 +131,11 @@ def get_data():
     reverse_vocab[len(vocab)] = 'UNK' #why isn't it len(vocab) + 1 like the vocab?
 
     #TODO: convert data to their indices
-    #TODO: check that this is converting to IDs correctly
-    #What to do for test data, if word isn't in vocab, UNK it?
-    #What words should we UNK?
-    #Does this convert_to_id handle UNKING things?
+
     train_data = convert_to_id(vocab,train_data)
     test_data = convert_to_id(vocab,test_data)
 
-    #TODO: see what filter_vocab does?
-    #What to do for test data, if word isn't in vocab, UNK it?
-    #What words should we UNK?
+    #TODO: Pad the data
 
-    #TODO: go through paper again and see how they are doing preprocessing/preparing the ngrams?
-    return train_data, test_data, train_labels, test_labels, vocab, reverse_vocab
+    return train_data, test_data, train_labels, test_labels, vocab, reverse_vocab, frequency
 

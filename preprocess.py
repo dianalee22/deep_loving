@@ -136,6 +136,24 @@ def get_data():
     test_data = convert_to_id(vocab,test_data)
 
     #TODO: Pad the data
+    #TODO: Pad data
+    max_train = max(map(lambda x:len(x), train_data))
+    max_test =  max(map(lambda x:len(x), test_data))
+    max_all=  max(max_train,max_test)
 
-    return train_data, test_data, train_labels, test_labels, vocab, reverse_vocab, frequency
+    new_train_data  =[]
+    for data in train_data:
+        t = data
+        if max_all - len(data) > 0:
+            t = np.pad(data,(0,max_all-len(data)),'constant',constant_values = len(vocab))
+        new_train_data.append(t)
+
+    new_test_data = []
+    for data in test_data:
+        t = data
+        if max_all - len(data) > 0:
+            t = np.pad(data,(0,max_all-len(data)),'constant',constant_values = len(vocab))
+        new_test_data.append(t)
+        
+    return new_train_data, new_test_data, train_labels, test_labels, vocab, reverse_vocab, frequency
 

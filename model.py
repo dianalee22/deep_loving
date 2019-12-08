@@ -31,11 +31,11 @@ class Model(nn.Module):
 		self.drop2 = nn.Dropout(0.5)
 		# find out what this input size is from the prev layer - the 100 is a placeholder
 		self.dense = nn.Linear(100, self.vocab_size) 
-		self.softmax = nn.Softmax()
+		self.softmax = nn.Softmax() # should we do softmax??
 		# the paper doesn't really use an optimizer, we can figure that out
 		self.optimizer = torch.optim.Adam(self.parameters(), lr=(0.0001))
 
-	def forward(self, input):
+	def call(self, input):
 		"""
 		"""
 		embedding = self.drop1(self.embedding(input))
@@ -45,17 +45,24 @@ class Model(nn.Module):
 	
 		return prbs
 
-	def accuracy_function(self, logits, labels):
-		"""
-		Computes the accuracy across a batch of logits and labels.
+	def loss_function(self, prbs, labels):
+		# Labels need to be one hot encoded
+		return tf.reduce_mean(nn.CrossEntropyLoss(labels, prbs))
 
+	def accuracy_function(self, prbs, labels):
+		"""
 		:return: mean accuracy over batch.
 		"""
+		values, indices = torch.max(prbs, 0) # make sure this axis is correct 
+		accuracy = torch.mean(torch.eq(values, labels)) # may have to cast
+		return accuracy
+
+	def f1_function(prbs, labels):
 		pass
 
 def main():
 	num_epochs = 10
-	train_data, test_data = preprocess.get_data('some-file-here')
+	#train_data, test_data = preprocess.get_data('some-file-here')
 	vocab_size = 100
 	model = Model(vocab_size)
 	

@@ -38,8 +38,8 @@ def train(model, train_input, train_labels):
         
 def test(model, test_input, test_labels):
 	"""
+	returns average accuracy across batches
 	"""
-	# TOASK: what do we want to return?
 	accuracy = 0
 	count = 0
 	for i in range(0, len(test_input), model.batch_size):
@@ -51,12 +51,13 @@ def test(model, test_input, test_labels):
 	return accuracy / count
 
 def main():
-	train_data, test_data = preprocess.get_data('some-file-here')
-	model = 
-
-	#for i in range(num_epochs):
-		#train(model, train_data)
-		#accuracy = test(model, test_data)
+	train_data, test_data, train_labels, test_labels, vocab, reverse_vocab, frequency = preprocess.get_data('some-file-here')
+	vocab_size = len(vocab)
+	model = Model(vocab_size)
+	# train and test for num_epochs 
+	for i in range(args.num_epochs):
+		train(model, train_data, train_labels)
+		print(test(model, test_data))
 
 if __name__ == '__main__':
 	main()

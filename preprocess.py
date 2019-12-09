@@ -165,6 +165,5 @@ def get_data():
     new_train_labels.tolist()
     new_test_labels.tolist()
 
-    return new_train_data, new_test_data, new_train_labels, new_test_labels,
-    vocab, reverse_vocab, frequency
+    return new_train_data, new_test_data, new_train_labels, new_test_labels, vocab, reverse_vocab, frequency
 

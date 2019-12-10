@@ -155,16 +155,6 @@ def get_data():
             t = np.pad(data,(0,max_all-len(data)),'constant',constant_values = len(vocab))
         new_test_data.append(t)
      
-    #one hot encode labels
-    # train_labels = np.asarray(train_labels)
-    # test_labels = np.asarray(test_labels)
-    # new_train_labels = np.zeros((len(train_labels),2))
-    # new_test_labels = np.zeros((len(test_labels),2))
-    # new_train_labels[np.arange(train_labels.size),train_labels] = 1
-    # new_test_labels[np.arange(test_labels.size),test_labels] = 1
-    # new_train_labels.tolist()
-    # new_test_labels.tolist()
 
-    #return new_train_data, new_test_data, new_train_labels, new_test_labels, vocab, reverse_vocab, frequency
     return new_train_data, new_test_data, train_labels, test_labels, vocab, reverse_vocab, frequency
 

@@ -47,16 +47,22 @@ class Model(nn.Module):
 		return prbs
 
 	def loss_function(self, prbs, labels):
-		# Labels: [500 x 2]
-		return torch.mean(nn.CrossEntropyLoss(labels, prbs))
+		# Labels: [500] for training
+		loss = nn.CrossEntropyLoss()
+		model_loss = torch.mean(loss(prbs, labels))
+		return model_loss
 
 	def accuracy_function(self, prbs, labels):
 		"""
-		Labels - 500 
 		:return: mean accuracy over batch.
 		"""
-		values, indices = torch.max(prbs, 0) # make sure this axis is correct 
-		accuracy = torch.mean(torch.eq(values, labels)) # may have to cast
+		num_examples_test_input = prbs.size()[0]
+		# Remove this once labels and prbs are of the same size again!!
+		labels = labels[:num_examples_test_input]
+		indices = torch.max(prbs, 1)[1]
+		eq_output = torch.eq(indices, labels) 
+		int_array = torch.FloatTensor(eq_output.numpy().astype(int)) # converts it from an array of bools to an array of floats
+		accuracy = torch.mean(int_array) # may have to cast
 		return accuracy
 
 	def f1_function(prbs, labels):

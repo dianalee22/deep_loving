@@ -44,10 +44,10 @@ def test(model, test_input, test_labels):
     accuracy = 0
     count = 0
     for i in range(0, len(test_input), model.batch_size):
-        input_batch = test_inputs[i:i+model.batch_size]
+        input_batch = torch.LongTensor(test_input[i:i+model.batch_size])
         label_batch = test_labels[i:i+model.batch_size]
         probabilities = model.call(input_batch)
-        accuracy += accuracy_function(probabilities, test_labels)
+        accuracy += model.accuracy_function(probabilities, test_labels)
         count += 1
     return accuracy / count
 
@@ -58,9 +58,11 @@ def main():
     # train and test for num_epochs 
     for i in range(args.num_epochs):
         train_input = torch.LongTensor(train_data)
-        test_input = torch.LongTensor(test_data) 
+        train_labels = torch.LongTensor(train_labels)
+        test_input = torch.LongTensor(test_data)
+        test_labels = torch.LongTensor(train_labels)
         train(model, train_input, train_labels)
-        print(test(model, test_data))
+        print(test(model, test_data, test_labels))
 
 if __name__ == '__main__':
     main()

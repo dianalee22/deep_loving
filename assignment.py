@@ -60,7 +60,7 @@ def main():
         train_input = torch.LongTensor(train_data)
         train_labels = torch.LongTensor(train_labels)
         test_input = torch.LongTensor(test_data)
-        test_labels = torch.LongTensor(train_labels)
+        test_labels = torch.LongTensor(test_labels)
         train(model, train_input, train_labels)
         print(test(model, test_data, test_labels))
 

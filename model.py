@@ -28,12 +28,12 @@ class Model(nn.Module):
 		self.embedding = torch.nn.Embedding(self.vocab_size, self.embedding_size)
 		self.drop1 = nn.Dropout(0.25)
 		self.lstm = nn.LSTM(self.embedding_size, self.lstm1_size)
-		self.drop2 = nn.Dropout(0.5)
+		self.drop2 = nn.Dropout(0.5) # maybe make this 25%
 		# find out what this input size is from the prev layer - the 100 is a placeholder
 		self.dense = nn.Linear(100, 2) 
 		self.softmax = nn.Softmax(dim=2) # should we do softmax??
 		# the paper doesn't really use an optimizer, we can figure that out
-		self.optimizer = torch.optim.Adam(self.parameters(), lr=(0.0001))
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=(0.001))
 
 	def call(self, input):
 		"""
@@ -41,6 +41,7 @@ class Model(nn.Module):
 		embedding = self.drop1(self.embedding(input)) # [500, 135, 40]
 		lstm_output = self.lstm(embedding)[0] # [500, 135, 100]
 		dense_output = self.drop2(self.dense(lstm_output)) #[500, 135, 2]
+		# flatten to [500 x 270], then dense layer to get it to [500, 2], then softmax 
 		word_prbs = self.softmax(dense_output) #[500, 135, 2]
 		prbs = torch.mean(word_prbs, dim=1) #[500, 2]
 	

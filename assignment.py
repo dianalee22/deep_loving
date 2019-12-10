@@ -10,19 +10,18 @@ from model import *
 parser = argparse.ArgumentParser(description='deep_loving')
 parser.add_argument('--batch-size', type=int, default=128,
                     help='Sizes of image batches fed through the network')
-parser.add_argument('--num-epochs', type=int, default=10,
+parser.add_argument('--num-epochs', type=int, default=15,
                     help='Number of passes through the training data to make before stopping')
 args = parser.parse_args()
 
 def train(model, train_input, train_labels):
     """
     """
-    # > TOASK: what does preprocess return and what do the models take in?
-    # TODO: shuffle train data (if you figure out pytorch implementation)
-    # indices = range(len(train_input))
-    # shuffled = tf.random.shuffle(indices)
-    # shuffled_inputs = tf.gather(train_input, shuffled)
-    # shuffled_labels = tf.gather(train_labels, shuffled)
+    num_examples = train_input.size()[0]
+    indices = torch.randperm(num_examples)
+
+    train_input = torch.index_select(train_input, 0, indices) 
+    train_labels = torch.index_select(train_labels, 0, indices)
 
     for i in range(0, len(train_input), model.batch_size):
         input_batch = train_input[i:i+model.batch_size]

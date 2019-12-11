@@ -8,7 +8,6 @@ import string
 def removeSymbols(s):
     """
     Takes in a comment and removes all symbols
-
     param s: string representing the social media comment from the read-in data
     return: string representing the social media comment with all of the symbols removed
     """
@@ -22,7 +21,6 @@ def removeSymbols(s):
 def tokenize(s):
     """
     Takes in a comment and splits the string on the white space
-
     param s: string representing the social media comment from the read-in data
     return: tokenized comment
     """
@@ -37,7 +35,6 @@ def tokenize(s):
 def convert_to_id(vocab,data):
     """
     Converts words to their unique IDs
-
     param vocab: dictionary from words to their unique ID
     param data: list of tokenized comments
     return: list of tokenized comments converted into their IDs
@@ -67,10 +64,10 @@ def get_data():
     annotations_path = 'hate-speech-dataset-master/annotations_metadata.csv'
     train_files = glob.glob('hate-speech-dataset-master/sampled_train/*.txt')
     test_files = glob.glob('hate-speech-dataset-master/sampled_test/*.txt')
-    #all_files = glob.glob('hate-speech-dataset-master/all_files/*.txt')
+    all_files = glob.glob('hate-speech-dataset-master/all_files/*.txt')
 
-    train_file_id = {x.replace('hate-speech-dataset-master/sampled_train/','').replace('.txt','') for x in train_files}
-    test_file_id = {x.replace('hate-speech-dataset-master/sampled_test/','').replace('.txt','') for x in test_files}
+    train_file_id = [x.replace('hate-speech-dataset-master/sampled_train/','').replace('.txt','') for x in train_files]
+    test_file_id = [x.replace('hate-speech-dataset-master/sampled_test/','').replace('.txt','') for x in test_files]
     #all_file_id = {x.replace('hate-speech-dataset-master/all_files/','').replace('.txt','') for x in all_files}
 
     #TODO: read in all labels into a dict mapping the file id to the corresponding label
@@ -83,6 +80,59 @@ def get_data():
                 label = 1
             labels[row[0]] = label
 
+    #TODO: read in the comments, remove symbols
+    train_data = []
+    for file in train_files:
+        f = open(file,"r")
+        s = removeSymbols(f.read())
+        train_data.append(s.lower())
+
+    test_data = []
+    for file in test_files:
+        f = open(file,"r")
+        s = removeSymbols(f.read())
+        test_data.append(s.lower())
+
+    i = 0
+    all_data = []
+    all_file_id = []
+    for file in all_files:
+        if i== 500:
+            break
+        else:
+            f = open(file,"r")
+            s = removeSymbols(f.read())
+            s = s.lower()
+            if s not in test_data or s not in train_data:
+                all_file_id.append(file.replace('hate-speech-dataset-master/all_files/','').replace('.txt',''))
+                all_data.append(s)
+                i += 1
+
+    count = len(all_data) + len(train_data) + len(test_data)
+    split = int(count // (10/7.5))
+    add_train = split - len(train_data)
+    add_test = (count - split) - len(test_data)
+
+    for j in range(0,add_train):
+        train_data.append(all_data[j])
+        train_file_id.append(all_file_id[j])
+    for k in range(0,add_test):
+        #print(count + k)
+        test_data.append(all_data[add_train+k])
+        test_file_id.append(all_file_id[add_train+k])
+
+    #tokenize:
+    new_train_data = []
+    new_test_data = []
+    for s in train_data:
+        new_train_data.append(tokenize(s))
+    for s in test_data:
+        new_test_data.append(tokenize(s))
+
+    train_data = new_train_data
+    test_data = new_test_data
+
+
     #TODO: gather the labels for the training and testing data
     train_labels = []
     for f in train_file_id:
@@ -92,33 +142,11 @@ def get_data():
     for f in test_file_id:
         test_labels.append(labels[f])
 
-    # all_label = []
-    # for f in all_file_id:
-    #     all_labels.append(labels[f])
-
-    #TODO: read in the comments, remove symbols, and tokenize
-    train_data = []
-    for file in train_files:
-        f = open(file,"r")
-        s = removeSymbols(f.read())
-        train_data.append(tokenize(s.lower()))
-
-    test_data = []
-    for file in test_files:
-        f = open(file,"r")
-        s = removeSymbols(f.read())
-        test_data.append(tokenize(s.lower()))
-
-    # all_data = []
-    # for file in all_files:
-    #     f = open(file,"r")
-    #     s = removeSymbols(f.read())
-    #     test_data.append(tokenize(s.lower()))
 
     #TODO: build vocab from train data
     vocab = {}
     reverse_vocab = {}
-    frequency = defaultdict(int) 
+    frequency = defaultdict(int)
     vocab_ind = 1
     for data in train_data:
         for word in data:
@@ -155,5 +183,12 @@ def get_data():
             t = np.pad(data,(0,max_all-len(data)),'constant',constant_values = len(vocab))
         new_test_data.append(t)
 
+    # print("train size")
+    # print(len(new_train_data),len(new_train_data[0]))
+    # print(len(new_test_data),len(new_test_data[0]))
+    #
+    # print("labels size")
+    # print(len(train_labels))
+    # print(len(test_labels))
     return new_train_data, new_test_data, train_labels, test_labels, vocab, reverse_vocab, frequency
 

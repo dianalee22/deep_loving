@@ -16,6 +16,7 @@ args = parser.parse_args()
 
 def train(model, train_input, train_labels):
     """
+    Shuffles the inputs and labels, and trains by batch
     """
     num_examples = train_input.size()[0]
     indices = torch.randperm(num_examples)
@@ -38,7 +39,7 @@ def train(model, train_input, train_labels):
         
 def test(model, test_input, test_labels):
     """
-    returns average accuracy across batches
+    Returns average accuracy across batches
     """
     accuracy = 0
     count = 0
@@ -52,14 +53,18 @@ def test(model, test_input, test_labels):
 
 def main():
     train_data, test_data, train_labels, test_labels, vocab, reverse_vocab, frequency = preprocess.get_data()
+
+    train_input = torch.LongTensor(train_data)
+    train_labels = torch.LongTensor(train_labels)
+    test_input = torch.LongTensor(test_data)
+    test_labels = torch.LongTensor(test_labels)
+
     vocab_size = len(vocab) + 1
-    model = Model(vocab_size)
+    phrase_size = train_input.size()[1]
+    model = Model(vocab_size, phrase_size)
+
     # train and test for num_epochs 
     for i in range(args.num_epochs):
-        train_input = torch.LongTensor(train_data)
-        train_labels = torch.LongTensor(train_labels)
-        test_input = torch.LongTensor(test_data)
-        test_labels = torch.LongTensor(test_labels)
         train(model, train_input, train_labels)
         print(test(model, test_data, test_labels))
 

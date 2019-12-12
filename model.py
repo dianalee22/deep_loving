@@ -6,48 +6,47 @@ import torch.nn.functional as F
 #import preprocess
 
 class Model(nn.Module):
-	"""
-	"""
 
-	def __init__(self, vocab_size):
-		"""
-		"""
+	def __init__(self, vocab_size, phrase_size):
+
 		super(Model, self).__init__()
-		self.vocab_size = vocab_size #5565
+		self.vocab_size = vocab_size
+		self.phrase_size = phrase_size
 
-		# Initialize hyperparameters
+		# Initializing the hyperparameters
 		self.batch_size = 500 
 		self.embedding_size = 40 
-		self.lstm1_size = 100
+		self.lstm_size = 100
 		self.dense1_size = 100
 
-		# Initialize trainable parameters
+		# Initializing trainable parameters
 		self.embedding = torch.nn.Embedding(self.vocab_size, self.embedding_size)
 		self.drop1 = nn.Dropout(0.25)
-		self.lstm = nn.LSTM(self.embedding_size, self.lstm1_size)
-		self.drop2 = nn.Dropout(0.25) # Paper had this as 50%
-		self.dense1 = nn.Linear(self.lstm1_size, 2)
-		self.dense2 = nn.Linear(270, 2) 
+		self.lstm = nn.LSTM(self.embedding_size, self.lstm_size)
+		self.drop2 = nn.Dropout(0.25)
+		self.dense1 = nn.Linear(self.lstm_size, 2)
+		self.dense2 = nn.Linear(self.phrase_size * 2, 2) 
 		self.softmax = nn.Softmax(dim=1) 
 		self.optimizer = torch.optim.Adam(self.parameters(), lr=(0.001))
 
 	def call(self, input):
 		"""
+		Returns the probabilities of each comment / phrase being hate speech or not
 		"""
-		embedding = self.drop1(self.embedding(input)) # [500, 135, 40]
-		lstm_output = self.lstm(embedding)[0] # [500, 135, 100]
-		dense_output1 = self.drop2(self.dense1(lstm_output)) #[500, 135, 2]
+		embedding = self.drop1(self.embedding(input))
+		lstm_output = self.lstm(embedding)[0]
+		dense_output1 = self.drop2(self.dense1(lstm_output))
 
-		hidden_layer_size = dense_output1.size()[1] * dense_output1.size()[2]
-
-		reshaped = dense_output1.view(-1, hidden_layer_size)
+		reshaped = dense_output1.view(-1, self.phrase_size * 2)
 		dense_output2 = self.dense2(reshaped)
-		word_prbs = self.softmax(dense_output2)
+		prbs = self.softmax(dense_output2)
 
-		return word_prbs
+		return prbs
 
 	def loss_function(self, prbs, labels):
-
+		"""
+		Calculates the Cross Entropy loss
+		"""
 		loss = nn.CrossEntropyLoss()
 		model_loss = torch.mean(loss(prbs, labels))
 		return model_loss
@@ -59,11 +58,8 @@ class Model(nn.Module):
 		indices = torch.max(prbs, 1)[1]
 		eq_output = torch.eq(indices, labels) 
 
-		# converts it from an array of bools to an array of floats
-		int_array = torch.FloatTensor(eq_output.numpy().astype(int)) 
+		# converts eq_output from an array of bools to an array of floats
+		float_array = torch.FloatTensor(eq_output.numpy().astype(int)) 
 
-		accuracy = torch.mean(int_array) 
+		accuracy = torch.mean(float_array) 
 		return accuracy
-
-	def f1_function(prbs, labels):
-		pass

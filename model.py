@@ -3,7 +3,6 @@ import numpy as np
 import torch as torch
 import torch.nn as nn
 import torch.nn.functional as F
-#import preprocess
 
 class Model(nn.Module):
 

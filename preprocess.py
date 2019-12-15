@@ -28,7 +28,7 @@ def tokenize(s):
     words = s.split()
 
     #TODO: remove stop words - filler words from gensim.parsing.preprocessing
-        #if you're running into an error, make sure that  gensim is installed (pip install -U gensim)
+        #if you're running into an error, make sure that gensim is installed (pip install -U gensim)
     words = [word for word in words if word not in STOPWORDS]
     return words
 
@@ -68,7 +68,6 @@ def get_data():
 
     train_file_id = [x.replace('hate-speech-dataset-master/sampled_train/','').replace('.txt','') for x in train_files]
     test_file_id = [x.replace('hate-speech-dataset-master/sampled_test/','').replace('.txt','') for x in test_files]
-    #all_file_id = {x.replace('hate-speech-dataset-master/all_files/','').replace('.txt','') for x in all_files}
 
     #TODO: read in all labels into a dict mapping the file id to the corresponding label
     labels = {}
@@ -117,7 +116,6 @@ def get_data():
         train_data.append(all_data[j])
         train_file_id.append(all_file_id[j])
     for k in range(0,add_test):
-        #print(count + k)
         test_data.append(all_data[add_train+k])
         test_file_id.append(all_file_id[add_train+k])
 
@@ -156,7 +154,7 @@ def get_data():
                 vocab_ind +=1
             frequency[word] += 1
     vocab['UNK'] = len(vocab) + 1
-    reverse_vocab[len(vocab)] = 'UNK' #why isn't it len(vocab) + 1 like the vocab?
+    reverse_vocab[len(vocab)] = 'UNK'
 
     #TODO: convert data to their indices
 
@@ -164,7 +162,6 @@ def get_data():
     test_data = convert_to_id(vocab,test_data)
 
     #TODO: Pad the data
-    #TODO: Pad data
     max_train = max(map(lambda x:len(x), train_data))
     max_test =  max(map(lambda x:len(x), test_data))
     max_all=  max(max_train,max_test)
@@ -183,12 +180,5 @@ def get_data():
             t = np.pad(data,(0,max_all-len(data)),'constant',constant_values = len(vocab))
         new_test_data.append(t)
 
-    # print("train size")
-    # print(len(new_train_data),len(new_train_data[0]))
-    # print(len(new_test_data),len(new_test_data[0]))
-    #
-    # print("labels size")
-    # print(len(train_labels))
-    # print(len(test_labels))
     return new_train_data, new_test_data, train_labels, test_labels, vocab, reverse_vocab, frequency
 

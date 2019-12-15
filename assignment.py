@@ -30,8 +30,6 @@ def train(model, train_input, train_labels):
 
         probabilities = model.call(input_batch)
         loss = model.loss_function(probabilities, label_batch)
-        # > TOASK-TA: why do I zero the gradient?
-        # descend gradient
         model.optimizer.zero_grad()
         loss.backward()
         model.optimizer.step()

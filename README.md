@@ -1,7 +1,7 @@
 # deep_loving
 
 ### Requirements: 
-- cs1470 course virtual environment 
+- CS 1470 course virtual environment 
 - Gensim
 
 ### Instructions to run: 
